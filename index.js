@@ -49,7 +49,7 @@ const obtenerTn = () => {
     datos.forEach((dato, index) => {
         if (index === 0) return; // Saltar la primera fila si es encabezado
 
-        const numeroOrden = dato['Número de orden']; 
+        const numeroOrden = Number(dato['Número de orden']); 
         const producto = String(dato['Nombre del producto']); 
 
         if (agrupados[numeroOrden]) {
@@ -57,14 +57,14 @@ const obtenerTn = () => {
             agrupados[numeroOrden]['Nombre del producto'] += ' - ' + producto;
         } else {
             agrupados[numeroOrden] = {
-                'Estado del pago': dato['Estado del pago'],
-                'Fecha': dato['Fecha'],
+                'Estado del pago': String(dato['Estado del pago']),
+                'Fecha': String(dato['Fecha']),
                 'Número de orden': numeroOrden,
                 'Cantidad': 1,
-                'Nombre del comprador': dato['Nombre del comprador'],
+                'Nombre del comprador': String(dato['Nombre del comprador']),
                 'Nombre del producto': producto,
-                'Medio de pago': dato['Medio de pago'],
-                'Identificador de la transacción en el medio de pago': dato['Identificador de la transacción en el medio de pago']
+                'Medio de pago': String(dato['Medio de pago']),
+                'Identificador de la transacción en el medio de pago': Number(dato['Identificador de la transacción en el medio de pago'])
             };
         }
     });
@@ -75,7 +75,7 @@ const obtenerTn = () => {
 // Función para obtener datos de Mercado Pago
 const obtenerMp = () => {
     if (!window.archivoMp) {
-        console.error("Archivo de Mercado Pago no cargado.");
+        alert("Archivo de Mercado Pago no cargado.");
         return [];
     }
     const nombreHoja = window.archivoMp.SheetNames[0];
@@ -105,14 +105,12 @@ const cruzarInfo = () => {
     return datosActualizados.map(dato => {
         const identificador = parseInt(dato['Identificador de la transacción en el medio de pago'], 10);
         const datosMpEncontrado = datosMp.find(mp => mp['Número de operación de Mercado Pago'] === identificador);
-        console.log(identificador)
-        console.log(datosMpEncontrado)
 
         if (datosMpEncontrado) {
-            const valorProducto = Math.abs(datosMpEncontrado['Valor del producto']);
-            const tarifaMercadoPago = Math.abs(datosMpEncontrado['Tarifa de Mercado Pago']);
-            const comisionTerceros = Math.abs(datosMpEncontrado['Comisión por uso de plataforma de terceros']);
-            const costosFinanciacion = Math.abs(datosMpEncontrado['Costos de financiación (financing_fee)']);
+            const valorProducto = datosMpEncontrado['Valor del producto'];
+            const tarifaMercadoPago = datosMpEncontrado['Tarifa de Mercado Pago'];
+            const comisionTerceros = datosMpEncontrado['Comisión por uso de plataforma de terceros'];
+            const costosFinanciacion = datosMpEncontrado['Costos de financiación (financing_fee)'];
             const montoRecibido = datosMpEncontrado['Monto recibido'];
             const impuestoIIBB = valorProducto - montoRecibido - costosFinanciacion - tarifaMercadoPago;
 
@@ -191,6 +189,6 @@ document.getElementById('generarBtn').addEventListener('click', async () => {
     if (datos.length > 0) {
         await guardarEnExcel(datos, 'Datos_Cruzados.xlsx');
     } else {
-        console.error('No hay datos para procesar.');
+        alert('No hay datos para procesar.');
     }
 });

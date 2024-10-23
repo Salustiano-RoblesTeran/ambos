@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruce de Información Excel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .file-upload-section {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .file-upload-section h5 {
+            margin-bottom: 10px;
+        }
+
+        .file-upload {
+            position: relative;
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .file-upload.file-upload-success {
+            border-color: #28a745; /* Color verde al cargar un archivo */
+            background-color: #bfeecb;
+        }
+
+        .file-upload:hover {
+            background-color: #e9ecef;
+        }
+
+        .file-upload i {
+            font-size: 3rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .file-upload p {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #495057;
+        }
+
+        .file-upload-subtext {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-btn {
+            margin-top: 20px;
+        }
+
+        .instructions {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 576px) {
+            header .container {
+                flex-direction: column;
+            }
+
+            header h1 {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Cruce de Información Excel</h1>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="container content my-5">
+        <h5 class="text">Sistema de cruzado de información entre Mercado Pago y Tienda Nube</h5>
+        <p class="text">La función de este software es generar un Excel a partir de los archivos de Tienda Nube y Mercado Pago. En el Excel resultante tendrás la información lista para copiarla y pegarla en el Excel que utilizan para hacer gestión y seguimiento de sus pedidos.</p>
+
+        <div class="row">
+            <!-- Sección de Archivo Excel 1 -->
+            <div class="col-md-6">
+                <div class="file-upload-section">
+                    <h5>Archivo Excel <b>MERCADO PAGO</b></h5>
+                    <div class="instructions">
+                        <p><strong>Siga las siguientes instrucciones:</strong></p>
+                        <p>1- Ingrese al siguiente <a href="https://www.mercadopago.com.ar/balance/reports/collection" target="_blank">link</a></p>
+                        <p>2- Presione el botón "Crear Reporte", seguido de "Crear"</p>
+                        <p>3- Seleccione el periodo deseado para obtener los cobros realizados (recomendable que coincida con la fecha del archivo de Tienda Nube)</p>
+                        <p>4- Presione "Generar"</p>
+                        <p>Espere unos minutos y descargue el archivo en formato .csv o .xlsx.</p>
+                        <p>Una vez descargado el archivo, cárguelo abajo.</p>
+                    </div>
+                    <div class="file-upload" id="uploadBox1">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p class="file-upload-text">Haz clic para subir o arrastra y suelta</p>
+                        <p class="file-upload-subtext">Archivos .csv o .xlsx</p>
+                        <input type="file" id="excelFile1" accept=".xls, .csv">
+                    </div>
+                </div>
+            </div>
+            <!-- Sección de Archivo Excel 2 -->
+            <div class="col-md-6">
+                <div class="file-upload-section">
+                    <h5>Archivo Excel <b>TIENDA NUBE</b></h5>
+                    <div class="instructions">
+                        <p><strong>Siga las siguientes instrucciones:</strong></p>
+                        <p>1- Ingrese a Tienda Nube</p>
+                        <p>2- Diríjase a la sección de Ventas</p>
+                        <p>3- En la parte superior derecha seleccione "Exportar Lista"</p>
+                        <p>4- Presione "Editar filtros"</p>
+                        <p>5- Seleccione un rango de fecha personalizado</p>
+                        <p>6- Ingrese desde y hasta cuando quiere la información requerida</p>
+                        <p>7- Apreta el botón "Filtrar" y luego presione "Exportar Lista"</p>
+                        <p>Una vez descargado el archivo, cárguelo abajo.</p>
+                    </div>
+                    <div class="file-upload" id="uploadBox2">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p class="file-upload-text">Haz clic para subir o arrastra y suelta</p>
+                        <p class="file-upload-subtext">Archivos .csv o .xlsx</p>
+                        <input type="file" id="excelFile2" accept=".xlsx, .xls, .csv">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón para cruzar la información -->
+        <div class="text-center">
+            <button class="btn btn-primary upload-btn" id="generarBtn">Cruzar Información</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Hecho por Salustiano Robles Terán, para ambosUP!Doc</p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- Añadir XLSX -->
+    <script src="./index.js"></script>
+</body>
+</html>

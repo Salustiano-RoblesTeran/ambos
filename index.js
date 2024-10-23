@@ -107,12 +107,14 @@ const cruzarInfo = () => {
         const datosMpEncontrado = datosMp.find(mp => mp['Número de operación de Mercado Pago'] === identificador);
 
         if (datosMpEncontrado) {
-            const valorProducto = datosMpEncontrado['Valor del producto'];
-            const tarifaMercadoPago = datosMpEncontrado['Tarifa de Mercado Pago'];
-            const comisionTerceros = datosMpEncontrado['Comisión por uso de plataforma de terceros'];
-            const costosFinanciacion = datosMpEncontrado['Costos de financiación (financing_fee)'];
-            const montoRecibido = datosMpEncontrado['Monto recibido'];
-            const impuestoIIBB = valorProducto - montoRecibido - costosFinanciacion - tarifaMercadoPago;
+            const valorProducto = Math.abs(Number(datosMpEncontrado['Valor del producto']));
+            const tarifaMercadoPago = Math.abs(Number(datosMpEncontrado['Tarifa de Mercado Pago']));
+            const comisionTerceros = Math.abs(Number(datosMpEncontrado['Comisión por uso de plataforma de terceros']));
+            const costosFinanciacion = Math.abs(Number(datosMpEncontrado['Costos de financiación (financing_fee)']));
+            const montoRecibido = Math.abs(Number(datosMpEncontrado['Monto recibido']));
+            
+            const impuestoIIBB = Math.abs(valorProducto - montoRecibido - costosFinanciacion - tarifaMercadoPago);
+            
 
             return {
                 'Estado del pago': dato['Estado del pago'],

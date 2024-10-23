@@ -46,8 +46,7 @@ const obtenerTn = () => {
     const datos = XLSX.utils.sheet_to_json(window.archivoTn.Sheets[hojaNombre], { cellDates: true });
 
     const agrupados = {};
-    datos.forEach((dato, index) => {
-        if (index === 0) return; // Saltar la primera fila si es encabezado
+    datos.forEach((dato) => {
 
         const numeroOrden = Number(dato['Número de orden']); 
         const producto = String(dato['Nombre del producto']); 
@@ -99,10 +98,10 @@ const cruzarInfo = () => {
         return [];
     }
 
-    const datosActualizados = obtenerTn();
+    const datosTn = obtenerTn();
     const datosMp = obtenerMp();
 
-    return datosActualizados.map(dato => {
+    return datosTn.map(dato => {
         const identificador = parseInt(dato['Identificador de la transacción en el medio de pago'], 10);
         const datosMpEncontrado = datosMp.find(mp => mp['Número de operación de Mercado Pago'] === identificador);
 

@@ -124,8 +124,6 @@ const cruzarInfo = () => {
                 const impuestoIIBB = Math.abs(valorProducto - montoRecibido - comisionTerceros - costosFinanciacion - tarifaMercadoPago - impuestoDebitoCredito);
                 const comisionTotal = Math.abs(tarifaMercadoPago + comisionTerceros);
 
-                console.log(comisionTotal);
-
                 return {
                     'Estado del pago': dato['Estado del pago'],
                     'Fecha': fechaHoy,

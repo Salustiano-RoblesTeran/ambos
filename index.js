@@ -108,7 +108,7 @@ const cruzarInfo = () => {
     const fechaHoy = new Date().toLocaleDateString();
 
     return datosTn
-        .filter(dato => dato['Estado del pago'] !== 'Rechazado') // Filtra los elementos con 'Estado del pago' == 'Rechazado'
+        .filter(dato => dato['Estado del pago'] === 'Recibido') // Filtra los elementos con 'Estado del pago' 
         .map(dato => {
             const identificador = parseInt(dato['Identificador de la transacción en el medio de pago'], 10);
             const datosMpEncontrado = datosMp.find(mp => mp['Número de operación de Mercado Pago'] === identificador);

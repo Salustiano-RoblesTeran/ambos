@@ -52,15 +52,39 @@ const obtenerTn = () => {
     datos.map((dato) => {
         const numeroOrden = parseInt(dato['Número de orden']); 
         const producto = String(dato['Nombre del producto'] || '');
+
+        let fechaFormateada = '';
+        if (dato['Fecha']) {
+            // Asumimos que dato['Fecha'] está en el formato "día/mes/año"
+            let [dia, mes, anio] = dato['Fecha'].split('/').map(Number);
+            
+            // Sumar 1 al mes
+            mes += 1;
         
+            // Ajuste del año si el mes excede 12
+            if (mes > 12) {
+                mes = 1;
+                anio += 1;
+            }
+        
+            // Aseguramos que día y mes siempre tengan dos dígitos
+            dia = dia.toString().padStart(2, '0');
+            mes = mes.toString().padStart(2, '0');
+        
+            // Formatear la fecha como "día/mes/año"
+            fechaFormateada = `${dia}/${mes}/${anio}`;
+        }
+        
+
         if (agrupados[numeroOrden]) {
             agrupados[numeroOrden]['Cantidad'] += 1;
             agrupados[numeroOrden]['Nombre del producto'] += ' - ' + producto;
         } else {
             agrupados[numeroOrden] = {
                 'Estado del pago': String(dato['Estado del pago'] || ''),
-                'Fecha': dato['Fecha'] ? String(dato['Fecha']) : '',
+                'Fecha': fechaFormateada, // Fecha ajustada con el mes incrementado
                 'Número de orden': numeroOrden,
+                'Identificador de la orden': dato['Identificador de la orden'],
                 'Cantidad': 1,
                 'Nombre del comprador': String(dato['Nombre del comprador'] || ''),
                 'Nombre del producto': producto,
@@ -74,6 +98,8 @@ const obtenerTn = () => {
     return Object.values(agrupados);
 };
 
+
+
 // Función para obtener datos de Mercado Pago
 const obtenerMp = () => {
     if (!window.archivoMp) {
@@ -81,7 +107,7 @@ const obtenerMp = () => {
         return [];
     }
     const nombreHoja = window.archivoMp.SheetNames[0];
-    const datos = XLSX.utils.sheet_to_json(window.archivoMp.Sheets[nombreHoja], { cellDates: true });
+    const datos = XLSX.utils.sheet_to_json(window.archivoMp.Sheets[nombreHoja], { cellDates: true, raw: false });
 
     return datos.map(dato => ({
         'Número de operación de Mercado Pago': Number(dato['NÃºmero de operaciÃ³n de Mercado Pago (operation_id)']),
@@ -105,7 +131,7 @@ const cruzarInfo = () => {
     const datosTn = obtenerTn();
     const datosMp = obtenerMp();
     
-    const fechaHoy = new Date().toLocaleDateString();
+    // const fechaHoy = new Date().toLocaleDateString();
 
     return datosTn
         .filter(dato => dato['Estado del pago'] === 'Recibido') // Filtra los elementos con 'Estado del pago' 
@@ -126,8 +152,9 @@ const cruzarInfo = () => {
 
                 return {
                     'Estado del pago': dato['Estado del pago'],
-                    'Fecha': fechaHoy,
+                    'Fecha': dato['Fecha'],
                     'Número de orden': dato['Número de orden'],
+                    'Identificador de la orden': dato['Identificador de la orden'],
                     'Nombre de cliente': dato['Nombre del comprador'],
                     'Nombre del producto': dato['Nombre del producto'],
                     'Cantidad': dato['Cantidad'],
@@ -141,8 +168,9 @@ const cruzarInfo = () => {
             } else {
                 return {
                     'Estado del pago': dato['Estado del pago'],
-                    'Fecha': fechaHoy,
+                    'Fecha': dato['Fecha'],
                     'Número de orden': dato['Número de orden'],
+                    'Identificador de la orden': dato['Identificador de la orden'],
                     'Nombre de cliente': dato['Nombre del comprador'],
                     'Nombre del producto': dato['Nombre del producto'],
                     'Cantidad': dato['Cantidad'],
@@ -185,22 +213,31 @@ const guardarEnExcel = async (datos, nombreArchivo) => {
     };
 
     // Agregar los datos a la hoja
-    datos.forEach(item => {
-        const row = worksheet.addRow(item);
-        
-        // Agregar bordes a cada celda de la fila
-        row.eachCell((cell) => {
-            cell.border = borderStyle;
-        });
+// Aplicar estilos y bordes a cada fila de datos
+datos.forEach(item => {
+    const row = worksheet.addRow(item);
+    
+    // Agregar bordes a cada celda de la fila
+    row.eachCell((cell) => {
+        cell.border = borderStyle;
     });
-
-    // Estilo para la cabecera
-    worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
-    worksheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '0070C0' }
+    
+    // Asignar el valor con hipervínculo a la celda correspondiente a "Número de orden"
+    const numeroOrdenCell = row.getCell(3); // Columna 3 corresponde a 'Número de orden'
+    numeroOrdenCell.value = {
+        text: item['Número de orden'],
+        hyperlink: `https://ambosupdoc.mitiendanube.com/admin/orders/${item['Identificador de la orden']}/`
     };
+});
+
+// Estilo para la cabecera
+worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFF' } };
+worksheet.getRow(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: '0070C0' }
+};
+
 
     // Estilos de fondo para ciertas celdas
     datos.forEach((item, index) => {

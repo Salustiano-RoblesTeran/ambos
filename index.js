@@ -53,36 +53,13 @@ const obtenerTn = () => {
         const numeroOrden = parseInt(dato['Número de orden']); 
         const producto = String(dato['Nombre del producto'] || '');
 
-        let fechaFormateada = '';
-        if (dato['Fecha']) {
-            // Asumimos que dato['Fecha'] está en el formato "día/mes/año"
-            let [dia, mes, anio] = dato['Fecha'].split('/').map(Number);
-            
-            // Sumar 1 al mes
-            mes += 1;
-        
-            // Ajuste del año si el mes excede 12
-            if (mes > 12) {
-                mes = 1;
-                anio += 1;
-            }
-        
-            // Aseguramos que día y mes siempre tengan dos dígitos
-            dia = dia.toString().padStart(2, '0');
-            mes = mes.toString().padStart(2, '0');
-        
-            // Formatear la fecha como "día/mes/año"
-            fechaFormateada = `${dia}/${mes}/${anio}`;
-        }
-        
-
         if (agrupados[numeroOrden]) {
             agrupados[numeroOrden]['Cantidad'] += 1;
             agrupados[numeroOrden]['Nombre del producto'] += ' - ' + producto;
         } else {
             agrupados[numeroOrden] = {
                 'Estado del pago': String(dato['Estado del pago'] || ''),
-                'Fecha': fechaFormateada, // Fecha ajustada con el mes incrementado
+                'Fecha': dato['Fecha'], 
                 'Número de orden': numeroOrden,
                 'Identificador de la orden': dato['Identificador de la orden'],
                 'Cantidad': 1,
@@ -130,8 +107,6 @@ const cruzarInfo = () => {
 
     const datosTn = obtenerTn();
     const datosMp = obtenerMp();
-    
-    // const fechaHoy = new Date().toLocaleDateString();
 
     return datosTn
         .filter(dato => dato['Estado del pago'] === 'Recibido') // Filtra los elementos con 'Estado del pago' 
